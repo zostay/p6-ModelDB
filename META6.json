@@ -8,6 +8,7 @@
     ],
     "perl": "6.c",
     "provides": {
+        "ModelDB": "lib/ModelDB.pm6",
         "ModelDB::Schema": "lib/ModelDB.pm6",
         "ModelDB::Column": "lib/ModelDB.pm6",
         "ModelDB::Model": "lib/ModelDB.pm6",
