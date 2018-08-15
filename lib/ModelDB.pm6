@@ -213,7 +213,13 @@ role ModelDB::Table[::Model] {
 
         $sth.execute(|@bindings);
 
-        $.model.new(|$sth.fetchrow-hash, :sql-load);
+        my %first = $sth.fetchrow-hash;
+        my %second = $sth.fetchrow-hash;
+
+        return Nil unless %first;
+        die "more than a single row found by .find()" if %second;
+
+        $.model.new(|%first, :sql-load);
     }
 
     multi method find(*%keys) { self.find(%keys) }
