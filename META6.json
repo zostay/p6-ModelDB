@@ -1,0 +1,22 @@
+{
+    "meta6": "0",
+    "name": "ModelDB",
+    "version": "0.0.1",
+    "description": "An ORM built on DBIish",
+    "authors": [
+        "Sterling Hanenkamp <hanenkamp@cpan.org>"
+    ],
+    "perl": "6.c",
+    "provides": {
+        "ModelDB::Schema": "lib/ModelDB.pm6",
+        "ModelDB::Column": "lib/ModelDB.pm6",
+        "ModelDB::Model": "lib/ModelDB.pm6",
+        "ModelDB::Collection": "lib/ModelDB.pm6",
+        "ModelDB::Table": "lib/ModelDB.pm6",
+        "ModelDB::TableBuilder": "lib/ModelDB.pm6",
+        "ModelDB::RelationshipSetup": "lib/ModelDB.pm6"
+    },
+    "depends": [ ],
+    "test-depends": [ "Test" ],
+    "source-url": "git://github.com/zostay/p6-ModelDB.git"
+}
