@@ -8,12 +8,6 @@ class ModelDB::Schema {
         $sth.execute;
         $sth.fetchrow[0];
     }
-
-    method changes() {
-        my $sth = $.dbh.prepare('SELECT changes()');
-        $sth.execute;
-        $sth.fetchrow[0].Int;
-    }
 }
 
 role ModelDB::Column[$column-name] {
