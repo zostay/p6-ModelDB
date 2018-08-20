@@ -249,30 +249,31 @@ role ModelDB::Table[::Model] {
         die "Wrong model; expected $.model but got $row.WHAT()"
             unless $row ~~ $.model;
 
-        my $id-column = $.model.HOW.id-column.substr(2);
+        my $id-column-attr-name = $.model.HOW.id-column;
+        my $id-column = $id-column-attr-name.substr(2);
         my $id-value  = $row."$id-column"();
 
         my ($where, @where-bindings) = self.process-where({
             $id-column => $id-value,
         });
 
-        my @settings = $.model.^columns.map(-> $col {
-            my $getter = $col.name.substr(2);
-            my $value  = $col.save-filter($row."$getter"());
-            $col.column-name => $value;
-        });
+        my @settings = $.model.^columns
+            .grep({ .name ne $id-column-attr-name })
+            .map(-> $col {
+                my $getter = $col.name.substr(2);
+                my $value  = $col.save-filter($row."$getter"());
+                $col.column-name => $value;
+            });
 
         my @set-names    = self.escaped-columns(@settings».key);
         my @set-bindings = @settings».value;
 
-        my $sth = $.schema.dbh.prepare(dd qq:to/END_STATEMENT/);
+        my $sth = $.schema.dbh.prepare(qq:to/END_STATEMENT/);
             UPDATE `$.escaped-table`
                SET @set-names.map({ "{sql-quote($_)} = ?" }).join(',')
              $where
             END_STATEMENT
 
-        dd @set-bindings;
-        dd @where-bindings;
         $sth.execute(|@set-bindings, |@where-bindings);
     }
 
