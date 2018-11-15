@@ -4,7 +4,7 @@ unit package MyTest::Accounts;
 
 use ModelDB::Builder;
 
-class Model {
+module Model {
     subset Side of Str
         where 'Left' | 'Right';
 
