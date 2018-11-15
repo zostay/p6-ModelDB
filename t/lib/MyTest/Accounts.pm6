@@ -2,9 +2,11 @@ use v6;
 
 unit package MyTest::Accounts;
 
-use ModelDB::Builder;
+use ModelDB;
 
 module Model {
+    use ModelDB::ModelBuilder;
+
     subset Side of Str
         where 'Left' | 'Right';
 
@@ -62,6 +64,8 @@ module Model {
 }
 
 class Schema is ModelDB::Schema {
+    use ModelDB::SchemaBuilder;
+
     has ModelDB::Table[Model::Account] $.accounts is table;
     has ModelDB::Table[Model::GeneralLedger] $.lines is table;
     has ModelDB::Table[Model::LedgerLine] $.entries is table;
