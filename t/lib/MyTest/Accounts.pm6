@@ -1,7 +1,8 @@
-unit package MyTest::Accounts;
 use v6;
 
-use ModelDB;
+unit package MyTest::Accounts;
+
+use ModelDB::Builder;
 
 class Model {
     subset Side of Str
