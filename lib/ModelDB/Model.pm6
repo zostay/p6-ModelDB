@@ -4,6 +4,20 @@ unit package ModelDB;
 
 use ModelDB::Column;
 
+=begin pod
+
+=head1 DESCRIPTION
+
+This class is inherited by every object declared with the C<model> keyword. It provides some common features to all model classes.
+
+=head1 METHODS
+
+=head2 method save-id
+
+    method save-id($id)
+
+=end pod
+
 class Model {
     method new(|c) {
         my $c = c;
