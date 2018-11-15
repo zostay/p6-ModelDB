@@ -6,29 +6,7 @@ use ModelDB::Column;
 use ModelDB::Model;
 use ModelDB::Schema;
 use ModelDB::Table;
-
-role ModelDB::TableBuilder[Str $table] {
-    method compose(Mu $package) {
-        callsame;
-        my $attr = self;
-        if $attr.has_accessor {
-            my $name = self.name.substr(2);
-            $package.^method_table{$name}.wrap(
-                method (|) {
-                    without $attr.get_value(self) {
-                        $attr.set_value(self,
-                            $attr.type.new(
-                                table  => $table,
-                                schema => self,
-                            )
-                        );
-                    }
-                    callsame;
-                }
-            );
-        }
-    }
-}
+use ModelDB::TableBuilder;
 
 role ModelDB::RelationshipSetup[Str $relationship-name, Str $schema-ref] {
     #     method compose(Mu $package) {
