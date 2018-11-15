@@ -1,37 +1,8 @@
 use v6;
 
 use ModelDB::Column;
+use ModelDB::Model;
 use ModelDB::Schema;
-
-class ModelDB::Model {
-    method new(|c) {
-        my $c = c;
-        if c.hash<sql-load> {
-            my %hash;
-            for c.hash.kv -> $c, $v {
-                if (my $attr = self.^attributes.first({ .name eq '$!' ~ $c })) ~~ ModelDB::Column {
-                    #note "HERE $attr.name() <- $attr.load-filter($v)";
-                    %hash{ $c } = $attr.load-filter($v);
-                }
-                else {
-                    %hash{ $c } = $v;
-                }
-            }
-
-            $c = Capture.new(:%hash, :list(c.list));
-            #dd $c;
-        }
-
-        nextwith(|$c);
-    }
-
-    method save-id($id) {
-        my $attr = self.^attributes.first({ .name eq self.HOW.id-column });
-        return unless $attr;
-        my $filter-id = $attr.load-filter($id);
-        $attr.set_value(self, $filter-id);
-    }
-}
 
 class MetamodelX::DBModelHOW is Metamodel::ClassHOW {
     has Str $.id-column is rw;
