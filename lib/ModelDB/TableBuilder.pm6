@@ -10,7 +10,7 @@ Helps to setup table objects when declared with the C<is table> trait in a schem
 
 =end pod
 
-role ModelDB::TableBuilder[Str $table] {
+role TableBuilder[Str $table] {
     method compose(Mu $package) {
         callsame;
         my $attr = self;

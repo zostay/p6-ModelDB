@@ -4,25 +4,12 @@ use MetamodelX::DBModelHOW;
 use ModelDB::Collection;
 use ModelDB::Column;
 use ModelDB::Model;
+use ModelDB::RelationshipSetup;
 use ModelDB::Schema;
 use ModelDB::Table;
 use ModelDB::TableBuilder;
 
-role ModelDB::RelationshipSetup[Str $relationship-name, Str $schema-ref] {
-    #     method compose(Mu $package) {
-    #         callsame;
-    #         if self.has_accessor {
-    #             my $name = self.name.substr(2);
-    #             $package.^method_table{$name}.wrap(
-    #                 method (|) {
-    #                     (my $value = callsame)
-    #                         andthen $value."_set-key-for-$relationship-name"($schema-ref);
-    #                     $value;
-    #                 }
-    #             );
-    #         }
-    #     }
-}
+module ModelDB {}
 
 sub belongs-to(
     Str :$relationship,
