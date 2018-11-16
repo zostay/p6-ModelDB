@@ -8,7 +8,7 @@ use ModelDB::Schema;
 use ModelDB::Table;
 use ModelDB::TableBuilder;
 
-module ModelDB {}
+module ModelDB:ver<0.0.1>:auth<github:zostay> {}
 
 =begin pod
 
