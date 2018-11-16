@@ -7,9 +7,40 @@ class ModelDB::Collection::Table { ... }
 
 =begin pod
 
+=head1 NAME
+
+ModelDB::Table - load, save, and find model data
+
+=head1 SYNOPSIS
+
+    use ModelDB;
+
+    module Model {
+        use ModelDB::ModelBuilder;
+        model Animal {
+            has Int $.animal-id is column is primary;
+            has Str $.name is column is rw;
+        }
+    }
+
+    my ModelDB::Schema $schema .= new(...);
+    my ModelDB::Table[Model::Animal] $animals .= new(
+        :$schema, :table<animals>
+    );
+
+    my $cow = $animals.create(%(:name<Cow>));
+    my $pig = $animals.create(%(:name<Pig>));
+
+    my $sheep = $animals.find(:animal-id(4));
+
+    $pig.name = 'Zombie Pigman';
+    $animals.update($pig);
+
 =head1 DESCRIPTION
 
 A table provides the operations necessary for loading, searching, saving, and otherwise working with a model object in a concrete way involving a backing store.
+
+The L<#SYNOPSIS> demonstrates how to create table objects directly. However, you will most likely want to do this indirectly through the L<ModelDB::SchemaBuilder>.
 
 =head1 METHODS
 
@@ -17,50 +48,82 @@ A table provides the operations necessary for loading, searching, saving, and ot
 
     has ModelDB::Schema $.schema is required
 
+This is the schema to use for manipulating data.
+
 =head2 method table
 
     has Str $.table is required
+
+This is the name of the RDBMS table to use.
 
 =head2 method model
 
     method model(--> ::Model)
 
+This is the model class.
+
 =head2 method escaped-table
 
     method escaped-table(--> Str)
+
+TODO This does not belong here.
+
+Provides a SQL escaped name for the table.
 
 =head2 method escaped-columns
 
     multi method escaped-columns(--> Str)
     multi method escaped-columns(@names --> Str)
 
+TODO This does not belong here.
+
+Provides SQL escaped names for columns.
+
 =head2 method select-columns
 
-    method select-columns(--> Str)
+    method select-columns(%columns --> Seq)
+
+TODO This does not belong here.
+
+Generates a data structure for selecting columns.
 
 =head2 method process-where
 
     method process-where(%where --> Str)
 
+TODO This is primitive.
+
+Generates a where clause.
+
 =head2 method find
 
     multi method find(%keys --> ::Model)
+
+Returns the model object with the given primary key or returns C<Nil>.
 
 =head2 method create
 
     method create(%values, Str :$onconflict)
 
+Creates a model object and returns it.
+
 =head2 method update
 
     method update(::Model $row)
+
+Given a model object, updates the database to match.
 
 =head2 method delete
 
     method delete(:%where)
 
+Deletes objects matching the given where clause.
+
 =head2 method search
 
     method search(*%search --> ModelDB::Collection)
+
+Returns a collection of objects matching the given where clause.
 
 =end pod
 

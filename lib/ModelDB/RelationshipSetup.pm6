@@ -4,6 +4,10 @@ unit package ModelDB;
 
 =begin pod
 
+=head1 NAME
+
+ModelDB::RelationshipSetup - internal bits managing relationships
+
 =head1 DESCRIPTION
 
 Performs setup required for relationships between tables.

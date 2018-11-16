@@ -6,6 +6,10 @@ use ModelDB::Column;
 
 =begin pod
 
+=head1 NAME
+
+ModelDB::Model - This is the base class for all models
+
 =head1 DESCRIPTION
 
 This class is inherited by every object declared with the C<model> keyword. It provides some common features to all model classes.
@@ -15,6 +19,8 @@ This class is inherited by every object declared with the C<model> keyword. It p
 =head2 method save-id
 
     method save-id($id)
+
+Sets the primary key field. This method should not be called except by ModelDB components. It is only called when a row is created.
 
 =end pod
 

@@ -4,6 +4,10 @@ unit package ModelDB;
 
 =begin pod
 
+=head1 NAME
+
+ModelDB::TableBuilder - internal schema helper
+
 =head1 DESCRIPTION
 
 Helps to setup table objects when declared with the C<is table> trait in a schema.
