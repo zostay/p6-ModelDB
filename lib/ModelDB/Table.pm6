@@ -2,6 +2,7 @@ use v6;
 
 use ModelDB::Collection;
 use ModelDB::Schema;
+use ModelDB::Object;
 
 class ModelDB::Collection::Table { ... }
 
@@ -223,7 +224,7 @@ role ModelDB::Table[::Model] {
 
     multi method find(*%keys) { self.find(%keys) }
 
-    method create(%values, Str :$onconflict) {
+    multi method create(%values, Str :$onconflict) {
         my $row = $.model.new(|%values);
 
         my @columns = self.select-columns(%values);
@@ -248,6 +249,11 @@ role ModelDB::Table[::Model] {
         $row.save-id($id);
 
         $row;
+    }
+
+    multi method create(ModelDB::Object:D $row, Str :$onconflict) {
+        my %values = $row.create-values;
+        self.create(%values, :$onconflict);
     }
 
     method update($row) {

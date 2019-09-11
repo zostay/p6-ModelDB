@@ -3,6 +3,7 @@ use v6;
 unit package ModelDB;
 
 use ModelDB::Column;
+use ModelDB::Object;
 
 =begin pod
 
@@ -24,7 +25,7 @@ Sets the primary key field. This method should not be called except by ModelDB c
 
 =end pod
 
-class Model {
+class Model does ModelDB::Object {
     method new(|c) {
         my $c = c;
         if c.hash<sql-load> {
@@ -51,6 +52,17 @@ class Model {
         return unless $attr;
         my $filter-id = $attr.load-filter($id);
         $attr.set_value(self, $filter-id);
+    }
+
+    method create-values(--> Hash) {
+        my $id-column-attr-name = self.HOW.id-column;
+        % = self.^columns
+            .grep({ .name ne $id-column-attr-name })
+            .map(-> $col {
+                my $getter = $col.name.substr(2);
+                my $value  = $col.save-filter(self."$getter"());
+                $col.column-name => $value;
+            });
     }
 }
 
