@@ -80,6 +80,15 @@ role Column[$column-name] {
             my $x = do given self.type {
                 when Bool { ?+$v }
                 when Int { $v.Int }
+
+                # AUCHTUNG! This is technically DB dependent, but it will work
+                # for any database I personally am likely to use. Oracle can be
+                # sewed close with yarn and burned for all I care.
+                when DateTime {
+                    my $iso = $v.Str.trans(' ' => 'T');
+                    DateTime.new($iso)
+                }
+
                 default { $v }
             }
             #dd self.type;
@@ -110,6 +119,14 @@ role Column[$column-name] {
         with $v {
             given self.type {
                 when Bool { $v ?? 1 !! 0 }
+
+                # AUCHTUNG! This is technically DB dependent, but it will work
+                # for any database I personally am likely to use. Oracle can be
+                # covered in yarn for all I care.
+                #
+                # Also, this loses TZ and nanos, if you care
+                when DateTime { $v.utc.Str.trans('T' => ' ').subst(/'.' \d+ Z$/, '') }
+
                 default { ~$v }
             }
         }

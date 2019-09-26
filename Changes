@@ -2,6 +2,7 @@
 
     * Apply save-filters during .create
     * Add support for MySQL last_insert_id().
+    * Add support for DateTime in the default save and load filters.
 
 v0.0.4	2019-09-10
 
