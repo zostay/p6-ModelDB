@@ -64,6 +64,8 @@ role Column[$column-name] {
 
     method column-name() { $column-name }
 
+    method getter-name() { self.name.substr(2) }
+
     method load-filter(Mu $v) {
         with &.when-loading {
             &.when-loading.($.name, $v);

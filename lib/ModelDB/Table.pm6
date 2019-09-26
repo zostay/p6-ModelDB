@@ -227,7 +227,14 @@ role ModelDB::Table[::Model] {
     multi method create(%values, Str :$onconflict) {
         my $row = $.model.new(|%values);
 
-        my @columns = self.select-columns(%values);
+        # FIXME Something is not right here. The escape-columns() stuff
+        # builds a map of sql-column-name => escaped-sql-column-name. However,
+        # the values the Perl developer is expected to use are the
+        # $.attribute-name without "$." on the front. A remedy for this will
+        # be needed at some point when sql-column-name ne attribute-name.
+        # For the moment, unfortunately, it is a necessary expedient for me to
+        # move onto different problems and live with this discrepency.
+        my $column-names = self.escaped-columns(%values.keys, :join<,>);
 
         my $conflict = '';
         if defined $onconflict && $onconflict ~~ any(<ignore>) {
@@ -235,11 +242,18 @@ role ModelDB::Table[::Model] {
         }
 
         my $sth = $.schema.dbh.prepare(qq:to/END_STATEMENT/);
-            INSERT$conflict INTO `$.escaped-table` (@columns.map(&sql-quote).join(','))
-            VALUES (@columns.map({ '?' }).join(','))
+            INSERT$conflict INTO `$.escaped-table` ($column-names)
+            VALUES ({('?' xx %values).join(',')})
             END_STATEMENT
 
-        $sth.execute(|%values{ @columns });
+        my @binds = $.model.^columns
+            .grep({ %values{ .name.substr(2) }:exists })
+            .map(-> $col {
+                my $getter = $col.getter-name;
+                $col.save-filter(%values{$col.getter-name});
+            });
+
+        $sth.execute(@binds);
 
         my $id = $.schema.last-insert-rowid;
         if $id == 0 && defined $onconflict {
