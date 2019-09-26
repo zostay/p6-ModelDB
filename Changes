@@ -1,6 +1,7 @@
 {{$NEXT}}
 
     * Apply save-filters during .create
+    * Add support for MySQL last_insert_id().
 
 v0.0.4	2019-09-10
 

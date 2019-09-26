@@ -38,7 +38,21 @@ class Schema {
     has $.dbh is required;
 
     method last-insert-rowid() {
-        my $sth = $.dbh.prepare('SELECT last_insert_rowid()');
+        my $sth = do given $.dbh {
+            use DBDish::SQLite::Connection;
+            use DBDish::mysql::Connection;
+
+            when DBDish::SQLite::Connection {
+                $.dbh.prepare('SELECT last_insert_rowid()');
+            }
+            when DBDish::mysql::Connection {
+                $.dbh.prepare('SELECT last_insert_id()');
+            }
+            default {
+                die "Unsupported database error";
+            }
+        }
+
         $sth.execute;
         $sth.fetchrow[0];
     }
