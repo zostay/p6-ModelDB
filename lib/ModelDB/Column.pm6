@@ -88,6 +88,7 @@ role Column[$column-name] {
                     my $iso = $v.Str.trans(' ' => 'T');
                     DateTime.new($iso)
                 }
+                when Date { Date.new(~$v) }
 
                 default { $v }
             }
@@ -126,6 +127,7 @@ role Column[$column-name] {
                 #
                 # Also, this loses TZ and nanos, if you care
                 when DateTime { $v.utc.Str.trans('T' => ' ').subst(/'.' \d+ Z$/, '') }
+                when Date { ~$v }
 
                 default { ~$v }
             }
