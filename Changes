@@ -1,3 +1,5 @@
+{{$NEXT}}
+
 v0.1.0	2019-09-27
 
     * Add support for Date in the default save and load filters.
