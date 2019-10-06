@@ -116,9 +116,21 @@ Given a model object, updates the database to match.
 
 =head2 method delete
 
-    method delete(:%where)
+    multi method delete(:%where, :$DELETE-ALL)
 
-Deletes objects matching the given where clause.
+Deletes objects matching the given where clause. Either the C<%where> argument
+or the C<$DELETE-ALL> argument must be present. When given, the C<%where>
+argument must have at least one constraint.
+
+    # Delete all records where name == "Fred"
+    $table.delete(where => %( name => 'Fred' ));
+
+If C<$DELETE-ALL> is present, then the argument that is given must be a list
+containing the words "I", "AM", and "SURE" in that order or the method will
+fail.
+
+    # Delete all records from this table
+    $table.delete(:DELETE-ALL<I AM SURE>);
 
 =head2 method search
 
