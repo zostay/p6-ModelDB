@@ -302,7 +302,10 @@ role ModelDB::Table[::Model] {
         $sth.execute(|@set-bindings, |@where-bindings);
     }
 
-    method delete(:%where) {
+    multi method delete(:%where!) {
+        die "To use empty WHERE clause during delete, use the :DELETE-ALL<I AM SURE>, option."
+            unless %where;
+
         my ($where, @bindings) = self.process-where(%where);
 
         my $sql = qq:to/END_STATEMENT/;
@@ -313,6 +316,19 @@ role ModelDB::Table[::Model] {
         my $sth = $.schema.dbh.prepare($sql);
 
         $sth.execute(|@bindings);
+    }
+
+    multi method delete(:$DELETE-ALL!) {
+        die "To use empty WHERE clause during delete, use the :DELETE-ALL<I AM SURE>, option."
+            unless $DELETE-ALL eqv <I AM SURE>;
+
+        my $sql = qq:to/END_STATEMENT/;
+            DELETE FROM `$.escaped-table`
+            END_STATEMENT
+
+        my $sth = $.schema.dbh.prepare($sql);
+
+        $sth.execute;
     }
 
     multi method search(%search) returns ModelDB::Collection {

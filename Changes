@@ -1,4 +1,6 @@
 {{$NEXT}}
+    
+    * Adding the :DELETE-ALL<I AM SURE> option to table .delete.
 
 v0.1.0	2019-09-27
 
