@@ -2,11 +2,28 @@ use v6;
 
 unit package ModelDB;
 
+use ModelDB::Connector;
+
 =begin pod
 
 =head1 NAME
 
-ModelDB::Schema - a schema ties models to tables on a particular DB connection
+ModelDB::Schema - a schema ties models to tables on a particular DB connector
+
+=head2 SYNOPSIS
+
+    use ModelDB::SchemaBuilder;
+    use MyApp::Model;
+
+    class MyApp::Schema is ModelDB::Schema {
+        has ModelDB::Table[MyApp::Model::Thing] $.things is table('thing');
+    }
+
+    my MyApp::Schema $schema .= new(
+        connect-args => \('mysql', :host<db.example.com>, :port(3306), :database<db_of_things>),
+    );
+
+    my @things = $schema.things.search.all;
 
 =head1 DESCRIPTION
 
@@ -18,43 +35,31 @@ When instantiated, a schema object is tied to a specific database connection. Mu
 
 =head1 METHODS
 
-=head2 method dbh
+=head2 method connect
 
-    has $.dbh is required
+    has Capture $.connect-args is required
 
-This is the L<DBIish> database handle the schema talks through.
+These are the arguments to pass to the C<connect> method of L<DBIish> when connecting to the database.
 
-=head2 method last-insert-rowid
+=head2 method connector
 
-    method last-insert-rowid(--> Any)
+    method connector(--> ModelDB::Connector)
 
-TODO This does not belong here.
-
-This is a method for fetching the last insert ID following an insert operation.
+This is the L<ModelDB::Connector> object that manages the database connections.
 
 =end pod
 
 class Schema {
-    has $.dbh is required;
+    has ModelDB::Connector $!connector;
 
-    method last-insert-rowid() {
-        my $sth = do given $.dbh {
-            use DBDish::SQLite::Connection;
-            use DBDish::mysql::Connection;
+    has UInt $.max-connections = 16;
+    has UInt $.tries = 2;
+    has Capture $.connect-args is required;
 
-            when DBDish::SQLite::Connection {
-                $.dbh.prepare('SELECT last_insert_rowid()');
-            }
-            when DBDish::mysql::Connection {
-                $.dbh.prepare('SELECT last_insert_id()');
-            }
-            default {
-                die "Unsupported database error";
-            }
-        }
-
-        $sth.execute;
-        $sth.fetchrow[0];
+    method connector(--> ModelDB::Connector) {
+        $!connector //= ModelDB::Connector.new(
+            :$.max-connections, :$.tries, :$.connect-args,
+        );
     }
 }
 

@@ -11,7 +11,8 @@
     "ModelDB": "lib/ModelDB.pm6",
     "MetamodelX::DBModelHOW": "lib/MetamodelX/DBModelHOW.pm6",
     "ModelDB::Schema": "lib/ModelDB/Schema.pm6",
-    "ModelDB::Column": "lib/ModelDB/Column.pm6"
+    "ModelDB::Column": "lib/ModelDB/Column.pm6",
+    "ModelDB::Connector": "lib/ModelDB/Connector.pm6"
   },
   "authors": [
     "Sterling Hanenkamp <hanenkamp@cpan.org>"

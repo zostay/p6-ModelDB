@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+    * Added the ModelDB::Connector connection manager.
+
 v0.1.1	2019-10-05
     
     * Adding the :DELETE-ALL<I AM SURE> option to table .delete.

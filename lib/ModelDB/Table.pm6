@@ -216,17 +216,20 @@ role ModelDB::Table[::Model] {
     multi method find(%keys) {
         my ($where, @bindings) = self.process-where(%keys);
 
+        my (%first, %second);
         my $columns = self.escaped-columns(:join<,>);
-        my $sth = self.schema.dbh.prepare(qq:to/END_STATEMENT/);
-            SELECT $columns
-            FROM `$.escaped-table`
-            $where
-            END_STATEMENT
+        $.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare(qq:to/END_STATEMENT/);
+                SELECT $columns
+                FROM `$.escaped-table`
+                $where
+                END_STATEMENT
 
-        $sth.execute(|@bindings);
+            $sth.execute(|@bindings);
 
-        my %first = $sth.fetchrow-hash;
-        my %second = $sth.fetchrow-hash;
+            %first  = $sth.fetchrow-hash;
+            %second = $sth.fetchrow-hash;
+        }
 
         return Nil unless %first;
         die "more than a single row found by .find()" if %second;
@@ -253,11 +256,6 @@ role ModelDB::Table[::Model] {
             $conflict = " OR " ~ uc $onconflict;
         }
 
-        my $sth = $.schema.dbh.prepare(qq:to/END_STATEMENT/);
-            INSERT$conflict INTO `$.escaped-table` ($column-names)
-            VALUES ({('?' xx %values).join(',')})
-            END_STATEMENT
-
         my @binds = $.model.^columns
             .grep({ %values{ .name.substr(2) }:exists })
             .map(-> $col {
@@ -265,14 +263,21 @@ role ModelDB::Table[::Model] {
                 $col.save-filter(%values{$col.getter-name});
             });
 
-        $sth.execute(@binds);
+        $.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare(qq:to/END_STATEMENT/);
+                INSERT$conflict INTO `$.escaped-table` ($column-names)
+                VALUES ({('?' xx %values).join(',')})
+                END_STATEMENT
 
-        my $id = $.schema.last-insert-rowid;
-        if $id == 0 && defined $onconflict {
-            return self.find(%values);
+            $sth.execute(@binds);
+
+            my $id = $.schema.connector.last-insert-rowid($dbh);
+            if $id == 0 && defined $onconflict {
+                return self.find(%values);
+            }
+
+            $row.save-id($id);
         }
-
-        $row.save-id($id);
 
         $row;
     }
@@ -305,13 +310,15 @@ role ModelDB::Table[::Model] {
         my @set-names    = self.escaped-columns(@settings».key);
         my @set-bindings = @settings».value;
 
-        my $sth = $.schema.dbh.prepare(qq:to/END_STATEMENT/);
-            UPDATE `$.escaped-table`
-               SET @set-names.map({ "{sql-quote($_)} = ?" }).join(',')
-             $where
-            END_STATEMENT
+        $.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare(qq:to/END_STATEMENT/);
+                UPDATE `$.escaped-table`
+                SET @set-names.map({ "{sql-quote($_)} = ?" }).join(',')
+                $where
+                END_STATEMENT
 
-        $sth.execute(|@set-bindings, |@where-bindings);
+            $sth.execute(|@set-bindings, |@where-bindings);
+        }
     }
 
     multi method delete(:%where!) {
@@ -325,9 +332,11 @@ role ModelDB::Table[::Model] {
             $where
             END_STATEMENT
 
-        my $sth = $.schema.dbh.prepare($sql);
+        $.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare($sql);
 
-        $sth.execute(|@bindings);
+            $sth.execute(|@bindings);
+        }
     }
 
     multi method delete(:$DELETE-ALL!) {
@@ -338,9 +347,11 @@ role ModelDB::Table[::Model] {
             DELETE FROM `$.escaped-table`
             END_STATEMENT
 
-        my $sth = $.schema.dbh.prepare($sql);
+        $.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare($sql);
 
-        $sth.execute;
+            $sth.execute;
+        }
     }
 
     multi method search(%search) returns ModelDB::Collection {
@@ -357,15 +368,17 @@ class ModelDB::Collection::Table does ModelDB::Collection {
         my ($where, @bindings) = $.table.process-where(%.search);
 
         my $columns = $.table.escaped-columns(:join<,>);
-        my $sth = $.table.schema.dbh.prepare(qq:to/END_STATEMENT/);
-            SELECT $columns
-            FROM `$.table.escaped-table()`
-            $where
-            END_STATEMENT
+        $.table.schema.connector.run: -> $dbh {
+            my $sth = $dbh.prepare(qq:to/END_STATEMENT/);
+                SELECT $columns
+                FROM `$.table.escaped-table()`
+                $where
+                END_STATEMENT
 
-        $sth.execute(|@bindings);
+            $sth.execute(|@bindings);
 
-        $sth.allrows(:array-of-hash).map({ $.table.model.new(|$_, :sql-load) })
+            eager $sth.allrows(:array-of-hash).map({ $.table.model.new(|$_, :sql-load) })
+        }
     }
 }
 
