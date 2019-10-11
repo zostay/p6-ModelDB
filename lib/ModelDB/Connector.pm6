@@ -1,38 +1,46 @@
-use v6;
+use v6.d;
 
 unit package ModelDB;
 
 use DBIish;
 
 class Connector {
+    my class Connection {
+        has $!dbh;
+        has $.connect-args;
+
+        method !connect() {
+            DBIish.connect(|$!connect-args);
+        }
+
+        method dbh() {
+            $!dbh //= self!connect();
+        }
+    }
+
     has UInt $.max-connections = 16;
     has UInt $.tries = 2;
 
     has Capture $.connect-args;
 
-    has @!available;
     has %!in-use;
+    has Channel $!connections .= new;
 
-    # Mutix to protect @!available
-    has Lock $!mutex .= new;
-
-    method !connect() {
-        DBIish.connect(|$!connect-args);
+    submethod TWEAK() {
+        for ^$!max-connections {
+            $!connections.send: Connection.new(:$!connect-args);
+        }
     }
 
     method acquire() {
-        my $dbh;
-        $!mutex.protect: {
-            $dbh = self!connect;
-            %!in-use{ $dbh.WHICH } = $dbh;
-        }
-        $dbh;
+        my $connection = await $!connections;
+        %!in-use{ $connection.dbh.WHICH } = $connection;
+        $connection.dbh;
     }
 
     method release($dbh) {
-        $!mutex.protect: {
-            push @!available, %!in-use{ $dbh.WHICH }:delete;
-        }
+        my $connection = %!in-use{ $dbh.WHICH }:delete;
+        $!connections.send: $connection;
     }
 
     method try-with($dbh, &code) {
@@ -46,8 +54,9 @@ class Connector {
                 CATCH {
                     when X::DBDish::DBError {
                         %!in-use{ $dbh.WHICH }:delete;
-                        $dbh = self!connect;
-                        %!in-use{ $dbh.WHICH } = $dbh;
+                        my $connection = Connection.new(:$!connect-args);
+                        %!in-use{ $connection.dbh.WHICH } = $connection;
+                        $dbh = $connection.dbh;
                     }
                 }
             }
