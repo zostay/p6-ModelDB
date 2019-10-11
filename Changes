@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+    * Rewrote the ModelDB::Connector so that is actually has a possibility of
+      working. Actually, if this does prove workable, it will write my next blog
+      post.
+
 v0.2.0	2019-10-08
 
     * Added the ModelDB::Connector connection manager.
