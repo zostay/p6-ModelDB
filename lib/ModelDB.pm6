@@ -1,4 +1,4 @@
-use v6;
+use v6.d;
 
 use ModelDB::Collection;
 use ModelDB::Column;

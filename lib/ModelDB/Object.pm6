@@ -1,3 +1,3 @@
-use v6;
+use v6.d;
 
 unit role ModelDB::Object;
