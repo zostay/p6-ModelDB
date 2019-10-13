@@ -1,46 +1,46 @@
 {
-  "test-depends": [
-    "Test"
-  ],
-  "meta-version": "0",
-  "license": null,
-  "depends": [
-    "DBIish"
-  ],
-  "authors": [
-    "Sterling Hanenkamp <hanenkamp@cpan.org>"
+  "resources": [
+    
   ],
   "support": {
     "source": null
   },
+  "perl": "6.d",
   "provides": {
+    "MetamodelX::DBModelHOW": "lib/MetamodelX/DBModelHOW.pm6",
+    "ModelDB::ModelBuilder": "lib/ModelDB/ModelBuilder.pm6",
+    "ModelDB::Model": "lib/ModelDB/Model.pm6",
     "ModelDB::RelationshipSetup": "lib/ModelDB/RelationshipSetup.pm6",
     "ModelDB::Connector": "lib/ModelDB/Connector.pm6",
     "ModelDB::Schema": "lib/ModelDB/Schema.pm6",
-    "ModelDB::Model": "lib/ModelDB/Model.pm6",
-    "MetamodelX::DBModelHOW": "lib/MetamodelX/DBModelHOW.pm6",
-    "ModelDB": "lib/ModelDB.pm6",
     "ModelDB::Object": "lib/ModelDB/Object.pm6",
-    "ModelDB::Collection": "lib/ModelDB/Collection.pm6",
     "ModelDB::Table": "lib/ModelDB/Table.pm6",
-    "ModelDB::Column": "lib/ModelDB/Column.pm6",
-    "ModelDB::SchemaBuilder": "lib/ModelDB/SchemaBuilder.pm6",
     "ModelDB::TableBuilder": "lib/ModelDB/TableBuilder.pm6",
-    "ModelDB::ModelBuilder": "lib/ModelDB/ModelBuilder.pm6"
+    "ModelDB": "lib/ModelDB.pm6",
+    "ModelDB::SchemaBuilder": "lib/ModelDB/SchemaBuilder.pm6",
+    "ModelDB::Column": "lib/ModelDB/Column.pm6",
+    "ModelDB::Collection": "lib/ModelDB/Collection.pm6"
   },
-  "description": "An ORM built on DBIish",
-  "auth": null,
+  "license": null,
+  "name": "ModelDB",
+  "meta-version": "0",
+  "depends": [
+    "DBIish"
+  ],
   "tags": [
     
   ],
-  "perl": "6.d",
-  "build-depends": [
-    
-  ],
-  "name": "ModelDB",
-  "version": "0.3.0",
+  "auth": null,
+  "description": "An ORM built on DBIish",
+  "version": "0.4.0",
   "source-url": "git://github.com/zostay/p6-ModelDB.git",
-  "resources": [
+  "test-depends": [
+    "Test"
+  ],
+  "authors": [
+    "Sterling Hanenkamp <hanenkamp@cpan.org>"
+  ],
+  "build-depends": [
     
   ]
 }
