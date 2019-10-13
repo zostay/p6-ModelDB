@@ -85,7 +85,7 @@ role Column[$column-name] {
                 # for any database I personally am likely to use. Oracle can be
                 # sewed close with yarn and burned for all I care.
                 when DateTime {
-                    my $iso = $v.Str.trans(' ' => 'T');
+                    my $iso = $v.Str.trans(' ' => 'T').substr(0,19) ~ 'Z';
                     DateTime.new($iso)
                 }
                 when Date { Date.new(~$v) }

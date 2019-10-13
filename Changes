@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+    * Fixing time zone handling in DateTime loading. (This is a super-gross fix
+      and probably a DBIish bug, but I'm fixing it the expedient way for the
+      moment.)
+
 v0.3.0	2019-10-11
     
     * Verison v6.d is required.
