@@ -52,7 +52,7 @@ This is the L<ModelDB::Connector> object that manages the database connections.
 class Schema {
     has ModelDB::Connector $!connector;
 
-    has UInt $.max-connections = 16;
+    has UInt $.max-connections = 1;
     has UInt $.tries = 2;
     has Capture $.connect-args is required;
 

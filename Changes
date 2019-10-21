@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+    * Change default number of connections for connector to 1 just in case your
+      client is not thread safe. Production applications, should there be any,
+      should make sure their client library is thread safe and consider
+      increasing this number to avoid contention.
+
 v0.4.0	2019-10-13
 
     * Fixing time zone handling in DateTime loading. (This is a super-gross fix

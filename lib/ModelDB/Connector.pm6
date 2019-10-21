@@ -18,7 +18,7 @@ class Connector {
         }
     }
 
-    has UInt $.max-connections = 16;
+    has UInt $.max-connections = 1;
     has UInt $.tries = 2;
 
     has Capture $.connect-args;
