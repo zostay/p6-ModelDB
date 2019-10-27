@@ -43,7 +43,7 @@ class Connector {
         $!connections.send: $connection;
     }
 
-    method try-with($dbh, &code) {
+    method try-with($dbh is rw, &code) {
         my $result;
 
         try {

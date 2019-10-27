@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+    * Fixed a bug that prevented connection recovery in most situations.
+
 v0.5.0	2019-10-22
 
     * Change default number of connections for connector to 1 just in case your
