@@ -46,17 +46,24 @@ class Connector {
     method try-with($dbh is rw, &code) {
         my $result;
 
-        try {
-            for ^$!tries {
+        for ^$!tries -> $try {
+            try {
                 $result := code($dbh);
                 last;
 
                 CATCH {
                     when X::DBDish::DBError {
-                        %!in-use{ $dbh.WHICH }:delete;
-                        my $connection = Connection.new(:$!connect-args);
-                        %!in-use{ $connection.dbh.WHICH } = $connection;
-                        $dbh = $connection.dbh;
+                        if $try < $!tries - 1 {
+                            try $dbh.disconnect;
+                            %!in-use{ $dbh.WHICH }:delete;
+
+                            my $connection = Connection.new(:$!connect-args);
+                            %!in-use{ $connection.dbh.WHICH } = $connection;
+                            $dbh = $connection.dbh;
+                        }
+                        else {
+                            .rethrow;
+                        }
                     }
                 }
             }

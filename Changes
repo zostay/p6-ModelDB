@@ -1,6 +1,11 @@
 {{$NEXT}}
 
     * Fixed a bug that prevented connection recovery in most situations.
+    * Fixed a bug that resulted in DB errors being absorbed by the database
+      connector incorrectly.
+    * Fixed a bug where connections were not disconnected on error in some case,
+      which could result in resource exhaustion until the garbage collector runs
+      next.
 
 v0.5.0	2019-10-22
 
