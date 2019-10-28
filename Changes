@@ -1,4 +1,4 @@
-{{$NEXT}}
+v0.6.0	2019-10-28
 
     * Fixed a bug that prevented connection recovery in most situations.
     * Fixed a bug that resulted in DB errors being absorbed by the database
