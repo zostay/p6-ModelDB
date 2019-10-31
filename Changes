@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+    * Change updates to only save attributes in a model that have been marked
+      `is rw`.
+
 v0.6.0	2019-10-28
 
     * Fixed a bug that prevented connection recovery in most situations.

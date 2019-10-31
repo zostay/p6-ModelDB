@@ -300,7 +300,7 @@ role ModelDB::Table[::Model] {
         });
 
         my @settings = $.model.^columns
-            .grep({ .name ne $id-column-attr-name })
+            .grep({ .name ne $id-column-attr-name && .rw })
             .map(-> $col {
                 my $getter = $col.name.substr(2);
                 my $value  = $col.save-filter($row."$getter"());
